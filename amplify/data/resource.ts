@@ -1,10 +1,5 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 
-import { schema as generatedSqlSchema } from './schema.sql';
-
-// Add a global authorization rule
-const sqlSchema = generatedSqlSchema.authorization(allow => allow.guest())
-
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
 adding a new "isDone" field as a boolean. The authorization rule below
@@ -19,22 +14,13 @@ const schema = a.schema({
     .authorization((allow) => [allow.owner()]),
 });
 
-// Use the a.combine() operator to stitch together the models backed by DynamoDB
-// and the models backed by Postgres or MySQL databases.
-
-const combinedSchema = a.combine([schema, sqlSchema]);
-
-// Don't forget to update your client types to take into account the types from
-// both schemas.
-
-export type Schema = ClientSchema<typeof combinedSchema>;
 
 /**
  * Define and configure the data resource for Triple Triad game
  * This configuration sets up the connection between Amplify and our PostgreSQL database
  */
 export const data = defineData({
-  schema: combinedSchema,
+  schema,
   authorizationModes: {
     // Use Cognito User Pool as the primary auth method
     defaultAuthorizationMode: 'userPool',
