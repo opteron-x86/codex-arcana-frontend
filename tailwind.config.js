@@ -7,7 +7,6 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        // Font stacks for different purposes
         fantasy: ['Cinzel', 'Crimson Pro', 'Cormorant', 'serif'],
         heading: ['Cinzel', 'Cormorant', 'Georgia', 'serif'],
         body: ['Inter', 'system-ui', 'sans-serif'],
@@ -61,6 +60,10 @@ export default {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(var(--tw-gradient-stops))',
         'gradient-bottom': 'linear-gradient(to bottom, var(--tw-gradient-stops))',
+        'text-gradient': 'linear-gradient(to right, var(--tw-gradient-stops))',
+      },
+      transformOrigin: {
+        'center-center': 'center center',
       },
       keyframes: {
         'ember-pulse': {
@@ -125,5 +128,17 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function({ addUtilities }) {
+      addUtilities({
+        '.bg-clip-text': {
+          '-webkit-background-clip': 'text',
+          'background-clip': 'text',
+        },
+        '.transform-center': {
+          'transform-origin': 'center',
+        },
+      });
+    },
+  ],
 }
