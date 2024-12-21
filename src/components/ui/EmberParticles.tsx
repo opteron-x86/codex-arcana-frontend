@@ -1,5 +1,3 @@
-import React, { useRef, useEffect } from 'react';
-
 const EmberParticles = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
