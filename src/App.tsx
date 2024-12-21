@@ -1,46 +1,42 @@
-import { useEffect, useState } from "react";
-import type { Schema } from "../amplify/data/resource";
-import { useAuthenticator } from '@aws-amplify/ui-react';
-import { generateClient } from "aws-amplify/data";
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Authenticator, useAuthenticator } from '@aws-amplify/ui-react';
+import HomePage from './pages/Home';
+import Dashboard from './pages/Dashboard';
+import AuthPage from './pages/AuthPage';
 
-const client = generateClient<Schema>();
+// Protected route wrapper component
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { authStatus } = useAuthenticator(context => [context.authStatus]);
+  
+  if (authStatus === 'configuring') {
+    return <div>Loading...</div>;
+  }
+
+  if (authStatus !== 'authenticated') {
+    return <Navigate to="/auth" />;
+  }
+
+  return <>{children}</>;
+};
 
 function App() {
-  const { user, signOut } = useAuthenticator();
-  const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
-  
-  function deleteTodo(id: string) {
-    client.models.Todo.delete({ id })
-  }
-
-  useEffect(() => {
-    client.models.Todo.observeQuery().subscribe({
-      next: (data) => setTodos([...data.items]),
-    });
-  }, []);
-
-  function createTodo() {
-    client.models.Todo.create({ content: window.prompt("Todo content") });
-  }
-
   return (
-    <main>
-      <h1>{user?.signInDetails?.loginId}'s todos</h1>
-      <button onClick={createTodo}>+ new</button>
-      <ul>
-        {todos.map((todo) => (
-          <li onClick={() => deleteTodo(todo.id)} key={todo.id}>{todo.content}</li>
-        ))}
-      </ul>
-      <div>
-        🥳 App successfully hosted. Try creating a new todo.
-        <br />
-        <a href="https://docs.amplify.aws/react/start/quickstart/#make-frontend-updates">
-          Review next step of this tutorial.
-        </a>
-      </div>
-      <button onClick={signOut}>Sign out</button>
-    </main>
+    <Authenticator.Provider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </Authenticator.Provider>
   );
 }
 
