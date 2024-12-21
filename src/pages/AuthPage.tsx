@@ -14,11 +14,23 @@ export default function AuthPage() {
   }, [authStatus, navigate]);
 
   return (
-    <div className="min-h-screen bg-dark-bg flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#1a1a24] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <Authenticator 
           socialProviders={[]}
           signUpAttributes={['email']}
+          components={{
+            Header: () => (
+              <div className="text-center mb-6">
+                <h1 className="font-serif text-3xl bg-gradient-to-r from-yellow-200 to-yellow-500 
+                             bg-clip-text text-transparent">
+                  Triple Triad
+                </h1>
+                <p className="text-gray-400 mt-2">Begin your journey</p>
+              </div>
+            ),
+          }}
+
         />
       </div>
     </div>

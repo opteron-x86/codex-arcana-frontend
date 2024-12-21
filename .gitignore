@@ -27,3 +27,8 @@ dist-ssr
 .amplify
 amplify_outputs*
 amplifyconfiguration*
+
+# in testing
+.src/services/gameDataService.ts
+.src/hooks/useGameData.ts
+.src/ui/CardCollectionTest.tsx
