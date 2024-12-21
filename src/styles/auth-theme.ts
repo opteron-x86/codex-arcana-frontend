@@ -37,10 +37,11 @@ export const darkFantasyTheme: Theme = {
         item: {
           borderColor: 'transparent',
           color: '{colors.font.secondary}',
-          _focus: {
-            color: '{colors.font.interactive}',
-          },
           _hover: {
+            color: '{colors.font.interactive}',
+            borderColor: '{colors.brand.primary.60}',
+          },
+          _focus: {
             color: '{colors.font.interactive}',
             borderColor: '{colors.brand.primary.60}',
           },
@@ -59,7 +60,7 @@ export const darkFantasyTheme: Theme = {
           },
           _focus: {
             backgroundColor: '#ea580c', // ember.600
-            borderColor: '#ffd7a8', // ember.200
+            borderColor: '{colors.brand.primary.60}',
           },
           _active: {
             backgroundColor: '#c2410c', // ember default

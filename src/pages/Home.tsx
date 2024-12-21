@@ -1,7 +1,7 @@
-
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { Sword, Shield, Scroll, Flame, Users, Trophy } from 'lucide-react';
-
+import { Sword, Shield, Scroll } from 'lucide-react';
+import { EmberParticles } from '../components/ui';
 import noiseTexture from '../assets/svg/noise.svg';
 import paperTexture from '../assets/svg/texture.svg';
 
@@ -9,15 +9,17 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-ash-900 text-ash-100 relative overflow-hidden">
       {/* Background effects */}
-      <div 
+      <EmberParticles />
+      <div className="absolute inset-0 bg-gradient-radial from-ember/10 via-transparent to-transparent opacity-50" />
+      <div
         className="absolute inset-0 opacity-5 mix-blend-overlay"
         style={{ backgroundImage: `url(${noiseTexture})` }}
       />
-      <div 
+      <div
         className="absolute inset-0 opacity-8 mix-blend-overlay"
         style={{ backgroundImage: `url(${paperTexture})` }}
       />
-      
+
       {/* Main content */}
       <div className="relative z-10">
         {/* Hero Section */}
@@ -29,11 +31,11 @@ const HomePage = () => {
               </h1>
               <div className="absolute -inset-2 bg-ember/20 blur-lg animate-ember-pulse -z-10" />
             </div>
-            
+
             <p className="font-body text-xl sm:text-2xl text-ash-300 italic mb-8 max-w-2xl mx-auto animate-fade-up">
               Where Strategy Meets Dark Fantasy
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
               <Link
                 to="/auth"
@@ -45,7 +47,7 @@ const HomePage = () => {
                             group-hover:opacity-100 transition-opacity duration-300" />
                 <span className="relative">Begin Your Journey</span>
               </Link>
-              
+
               <Link
                 to="/about"
                 className="px-8 py-4 border-2 border-ash-600 hover:border-ember 

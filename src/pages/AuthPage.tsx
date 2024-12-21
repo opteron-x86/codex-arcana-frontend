@@ -19,22 +19,18 @@ const AuthPage = () => {
 
   return (
     <div className="min-h-screen bg-ash-900 text-ash-100 relative overflow-hidden">
-      {/* Background Effects */}
       <EmberParticles />
       <div className="absolute inset-0 bg-gradient-radial from-ember/10 via-transparent to-transparent opacity-50" />
-      <div 
+      <div
         className="absolute inset-0 opacity-5 mix-blend-overlay"
         style={{ backgroundImage: `url(${noiseTexture})` }}
       />
-      <div 
+      <div
         className="absolute inset-0 opacity-8 mix-blend-overlay"
         style={{ backgroundImage: `url(${paperTexture})` }}
       />
-      
-      {/* Vignette effect */}
       <div className="absolute inset-0 bg-gradient-radial from-transparent to-black opacity-50" />
 
-      {/* Auth Container */}
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
         <div className="w-full max-w-md animate-fade-up">
           <div className="text-center mb-8">
@@ -42,7 +38,7 @@ const AuthPage = () => {
             <p className="font-body text-ash-300">Forge your path in the realm of Triple Triad</p>
           </div>
 
-          <Authenticator 
+          <Authenticator
             theme={darkFantasyTheme}
             components={{
               Header: () => null,
@@ -50,12 +46,12 @@ const AuthPage = () => {
             }}
             className="!bg-transparent"
           >
-            {({ signOut, user }) => (
-              <div>
-                {/* This should never render as we redirect on auth */}
-                <BonfireLoader />
-              </div>
-            )}
+            {({ user }) => {
+              if (!user) {
+                return null;
+              }
+              return <BonfireLoader />;
+            }}
           </Authenticator>
         </div>
       </div>
@@ -64,3 +60,5 @@ const AuthPage = () => {
 };
 
 export default AuthPage;
+
+
