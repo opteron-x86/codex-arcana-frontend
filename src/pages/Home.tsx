@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { Sword, Shield, Scroll } from 'lucide-react';
 import { EmberParticles } from '../components/ui';
