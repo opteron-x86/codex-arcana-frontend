@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { Sword, Shield, Scroll } from 'lucide-react';
-import { EmberParticles } from '../components/ui';
 import noiseTexture from '../assets/svg/noise.svg';
 import paperTexture from '../assets/svg/texture.svg';
 
@@ -8,8 +7,6 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-ash-900 text-ash-100 relative overflow-hidden">
       {/* Background effects */}
-      <EmberParticles />
-      <div className="absolute inset-0 bg-gradient-radial from-ember/10 via-transparent to-transparent opacity-50" />
       <div
         className="absolute inset-0 opacity-5 mix-blend-overlay"
         style={{ backgroundImage: `url(${noiseTexture})` }}
