@@ -1,46 +1,59 @@
-import { useEffect, useState } from "react";
-import type { Schema } from "../amplify/data/resource";
-import { useAuthenticator } from '@aws-amplify/ui-react';
-import { generateClient } from "aws-amplify/data";
-
-const client = generateClient<Schema>();
+import { useState, useEffect } from 'react';
+import { Auth } from 'aws-amplify';
+import Card from './Card'; // Import the Card component
 
 function App() {
-  const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
-  const { user, signOut } = useAuthenticator();
-  
-  function deleteTodo(id: string) {
-    client.models.Todo.delete({ id })
-  }
+  const [cards, setCards] = useState<any[]>([]); // Store the fetched cards
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    client.models.Todo.observeQuery().subscribe({
-      next: (data) => setTodos([...data.items]),
-    });
-  }, []);
+    async function fetchCards() {
+      try {
+        const session = await Auth.currentSession();
+        const token = session.getIdToken().getJwtToken();
 
-  function createTodo() {
-    client.models.Todo.create({ content: window.prompt("Todo content") });
+        const response = await fetch('https://ha6b9z9jdj.execute-api.us-east-2.amazonaws.com/stage1/cards', { // Replace with your API Gateway endpoint
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json(); // Try to parse error response
+          throw new Error(`HTTP error ${response.status}: ${errorData?.message || response.statusText}`);
+        }
+
+        const data = await response.json();
+        setCards(data);
+      } catch (err: any) {
+        console.error("Error fetching cards:", err);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchCards();
+  }, []); // Empty dependency array ensures this runs only once on mount
+
+  if (isLoading) {
+    return <div>Loading cards...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
   }
 
   return (
-    <main>
-      <h1>{user?.signInDetails?.loginId}'s todos</h1>
-      <button onClick={createTodo}>+ new</button>
-      <ul>
-        {todos.map((todo) => (
-          <li onClick={() => deleteTodo(todo.id)}key={todo.id}>{todo.content}</li>
+    <div className="App">
+      <h1>Card List</h1>
+      <div className="card-list">
+        {cards.map((card) => (
+          <Card key={card.id} card={card} />
         ))}
-      </ul>
-      <div>
-        🥳 App successfully hosted. Try creating a new todo.
-        <br />
-        <a href="https://docs.amplify.aws/react/start/quickstart/#make-frontend-updates">
-          Review next step of this tutorial.
-        </a>
       </div>
-      <button onClick={signOut}>Sign out</button>
-    </main>
+    </div>
   );
 }
 
