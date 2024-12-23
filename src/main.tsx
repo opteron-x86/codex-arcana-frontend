@@ -7,7 +7,7 @@ import App from './App';
 const cognitoAuthConfig = {
   authority: "https://cognito-idp.us-east-2.amazonaws.com/us-east-2_vx4KtfYEy",
   client_id: '3t6ps7f32n947q67ovi1ikarjg',
-  redirect_uri: 'https://d84l1y8p4kdic.cloudfront.net', // or your production URL
+  redirect_uri: 'https://dev.d29017v31a8sv8.amplifyapp.com/', // or your production URL
   response_type: 'code',
   scope: 'openid email profile', 
 };
