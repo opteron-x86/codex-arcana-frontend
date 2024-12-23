@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from 'react-oidc-context';
 
 interface Card {
@@ -13,6 +13,45 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  /**
+   * 1) This is the function that calls your "create player" (or "login") endpoint.
+   *    The endpoint is presumably something like POST https://YOUR_API/players
+   */
+  async function createPlayer() {
+    try {
+      const token = auth.user?.id_token; 
+      if (!token) {
+        throw new Error('No token found. Are you sure the user is authenticated?');
+      }
+
+      // Example POST to your "create/update player" endpoint
+      const response = await fetch('https://ha6b9z9jdj.execute-api.us-east-2.amazonaws.com/stage2/users', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        // If your lambda or backend expects a body, you can pass it here
+        // But typically, just sending the token in the Authorization header
+        // is enough if you're using a Cognito Authorizer to pull sub, email, etc.
+        body: JSON.stringify({ exampleField: 'someValue' }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error creating player. Status: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log('Player creation result:', data);
+    } catch (err: unknown) {
+      console.error('createPlayer error:', err);
+      // You might display an error if needed
+    }
+  }
+
+  /**
+   * 2) Example function to fetch cards from an authenticated endpoint
+   */
   async function fetchCards() {
     try {
       setIsLoading(true);
@@ -23,7 +62,7 @@ function App() {
         throw new Error('No token found. Are you sure the user is authenticated?');
       }
 
-      const response = await fetch('https://ha6b9z9jdj.execute-api.us-east-2.amazonaws.com/stage1/cards', {
+      const response = await fetch('https://ha6b9z9jdj.execute-api.us-east-2.amazonaws.com/stage3/cards', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -33,7 +72,6 @@ function App() {
         throw new Error(`Error fetching cards. Status: ${response.status} ${response.statusText}`);
       }
 
-      // Assume the response is something like { cards: Card[] }
       const data = await response.json();
       setCards(data.cards || []);
     } catch (err: unknown) {
@@ -47,7 +85,21 @@ function App() {
       setIsLoading(false);
     }
   }
-  // Optionally, you could fetch cards automatically once authenticated:
+
+  /**
+   * 3) useEffect: whenever auth.isAuthenticated becomes true,
+   *    we can create the player in the backend if they don't exist.
+   *    This runs only once (or again if isAuthenticated toggles),
+   *    ensuring the player's record is inserted or updated.
+   */
+  useEffect(() => {
+    if (auth.isAuthenticated) {
+      createPlayer();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auth.isAuthenticated]);
+
+  // You can also auto-fetch cards in a similar effect:
   // useEffect(() => {
   //   if (auth.isAuthenticated) {
   //     fetchCards();
@@ -66,19 +118,15 @@ function App() {
     return <button onClick={() => auth.signinRedirect()}>Sign In</button>;
   }
 
-  // Authenticated UI
   return (
     <div>
       <h2>Welcome, {auth.user?.profile?.email}</h2>
-      
-      {/* Button to manually trigger card fetching */}
+
       <button onClick={fetchCards} disabled={isLoading}>
         {isLoading ? 'Fetching...' : 'Fetch Cards'}
       </button>
 
       {error && <div style={{ color: 'red' }}>Error: {error}</div>}
-
-      {/* Display the fetched cards */}
       {cards.length > 0 ? (
         <ul>
           {cards.map((card) => (
@@ -88,7 +136,7 @@ function App() {
       ) : (
         !isLoading && <div>No cards yet.</div>
       )}
-      
+
       <button onClick={() => auth.removeUser()}>Sign Out (local)</button>
     </div>
   );
