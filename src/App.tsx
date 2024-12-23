@@ -62,7 +62,7 @@ function App() {
         throw new Error('No token found. Are you sure the user is authenticated?');
       }
 
-      const response = await fetch('https://ha6b9z9jdj.execute-api.us-east-2.amazonaws.com/stage3/cards', {
+      const response = await fetch('https://ha6b9z9jdj.execute-api.us-east-2.amazonaws.com/stage2/cards', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
