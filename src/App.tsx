@@ -25,7 +25,7 @@ function App() {
       }
 
       // Example POST to your "create/update player" endpoint
-      const response = await fetch('https://ha6b9z9jdj.execute-api.us-east-2.amazonaws.com/stage2/users', {
+      const response = await fetch('https://13i18l9mw7.execute-api.us-east-2.amazonaws.com/players', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -62,7 +62,7 @@ function App() {
         throw new Error('No token found. Are you sure the user is authenticated?');
       }
 
-      const response = await fetch('https://ha6b9z9jdj.execute-api.us-east-2.amazonaws.com/stage2/cards', {
+      const response = await fetch('https://13i18l9mw7.execute-api.us-east-2.amazonaws.com/cards', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
