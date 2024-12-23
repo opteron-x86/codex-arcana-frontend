@@ -9,6 +9,7 @@ interface Card {
 
 function App() {
   const auth = useAuth();
+
   const [cards, setCards] = useState<Card[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -121,7 +122,9 @@ function App() {
   return (
     <div>
       <h2>Welcome, {auth.user?.profile?.email}</h2>
-
+      <pre> ID Token: {auth.user?.id_token} </pre>
+      <pre> Access Token: {auth.user?.access_token} </pre>
+      <pre> Refresh Token: {auth.user?.refresh_token} </pre>
       <button onClick={fetchCards} disabled={isLoading}>
         {isLoading ? 'Fetching...' : 'Fetch Cards'}
       </button>
