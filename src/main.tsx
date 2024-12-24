@@ -2,6 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { AuthProvider } from 'react-oidc-context';
+import process from 'process';
 import App from './App';
 
 const cognitoAuthConfig = {
