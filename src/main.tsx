@@ -8,7 +8,7 @@ const cognitoAuthConfig = {
   authority: process.env.REACT_APP_COGNITO_AUTHORITY,
   client_id: process.env.REACT_APP_COGNITO_CLIENT_ID,
   redirect_uri: process.env.REACT_APP_COGNITO_REDIRECT_URI,
-  response_type: "code", // Typically fixed
+  response_type: "code",
   scope: process.env.REACT_APP_COGNITO_SCOPE,
 };
 
