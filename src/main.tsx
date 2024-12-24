@@ -5,14 +5,15 @@ import { AuthProvider } from 'react-oidc-context';
 import App from './App';
 
 const cognitoAuthConfig = {
-  authority: process.env.REACT_APP_COGNITO_AUTHORITY,
-  client_id: process.env.REACT_APP_COGNITO_CLIENT_ID,
-  redirect_uri: process.env.REACT_APP_COGNITO_REDIRECT_URI,
+  authority: process.env.REACT_APP_COGNITO_AUTHORITY || "",
+  client_id: process.env.REACT_APP_COGNITO_CLIENT_ID  || "",
+  redirect_uri: process.env.REACT_APP_COGNITO_REDIRECT_URI || "",
   response_type: "code",
-  scope: process.env.REACT_APP_COGNITO_SCOPE,
+  scope: process.env.REACT_APP_COGNITO_SCOPE || "",
 };
 
 if (!cognitoAuthConfig.authority || !cognitoAuthConfig.client_id || !cognitoAuthConfig.redirect_uri) {
+  console.error("Cognito configuration is missing or incomplete:", cognitoAuthConfig);
   throw new Error("Cognito configuration is missing in environment variables!");
 }
 
