@@ -33,7 +33,7 @@ function App() {
         throw new Error("No token found. Are you sure the user is authenticated?");
       }
 
-      const response = await fetch("https://<API_GATEWAY_ID>.execute-api.<REGION>.amazonaws.com/cards", {
+      const response = await fetch("https://13i18l9mw7.execute-api.us-east-2.amazonaws.com/cards", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -66,7 +66,7 @@ function App() {
         throw new Error("No token found. Are you sure the user is authenticated?");
       }
 
-      const response = await fetch("https://<API_GATEWAY_ID>.execute-api.<REGION>.amazonaws.com/players/cards", {
+      const response = await fetch("https://13i18l9mw7.execute-api.us-east-2.amazonaws.com/players/cards", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -96,7 +96,7 @@ function App() {
         throw new Error("No token found. Are you sure the user is authenticated?");
       }
 
-      const response = await fetch(`https://<API_GATEWAY_ID>.execute-api.<REGION>.amazonaws.com/players/cards`, {
+      const response = await fetch(`https://13i18l9mw7.execute-api.us-east-2.amazonaws.com/players/cards`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
