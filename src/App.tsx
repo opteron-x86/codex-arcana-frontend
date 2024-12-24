@@ -15,6 +15,8 @@ interface Card {
 function App() {
   const auth = useAuth();
 
+  const API_GATEWAY = process.env.REACT_APP_API_GATEWAY;
+
   const [masterlistCards, setMasterlistCards] = useState<Card[]>([]);
   const [playerCards, setPlayerCards] = useState<Card[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +35,7 @@ function App() {
         throw new Error("No token found. Are you sure the user is authenticated?");
       }
 
-      const response = await fetch("https://13i18l9mw7.execute-api.us-east-2.amazonaws.com/cards", {
+      const response = await fetch("${API_GATEWAY}/cards", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -66,7 +68,7 @@ function App() {
         throw new Error("No token found. Are you sure the user is authenticated?");
       }
 
-      const response = await fetch("https://13i18l9mw7.execute-api.us-east-2.amazonaws.com/players/cards", {
+      const response = await fetch("${API_GATEWAY}/players/cards", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -96,7 +98,7 @@ function App() {
         throw new Error("No token found. Are you sure the user is authenticated?");
       }
 
-      const response = await fetch(`https://13i18l9mw7.execute-api.us-east-2.amazonaws.com/players/cards`, {
+      const response = await fetch(`${API_GATEWAY}/players/cards`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
