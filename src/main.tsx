@@ -5,12 +5,16 @@ import { AuthProvider } from 'react-oidc-context';
 import App from './App';
 
 const cognitoAuthConfig = {
-  authority: "https://cognito-idp.us-east-2.amazonaws.com/us-east-2_mLBO8uCgR",
-  client_id: "3iaac8pddtpirbst142eb7jeg1",
-  redirect_uri: "https://dev.d29017v31a8sv8.amplifyapp.com",
-  response_type: "code",
-  scope: "email openid phone",
+  authority: process.env.REACT_APP_COGNITO_AUTHORITY,
+  client_id: process.env.REACT_APP_COGNITO_CLIENT_ID,
+  redirect_uri: process.env.REACT_APP_COGNITO_REDIRECT_URI,
+  response_type: "code", // Typically fixed
+  scope: process.env.REACT_APP_COGNITO_SCOPE,
 };
+
+if (!cognitoAuthConfig.authority || !cognitoAuthConfig.client_id || !cognitoAuthConfig.redirect_uri) {
+  throw new Error("Cognito configuration is missing in environment variables!");
+}
 
 const container = document.getElementById('root');
 if (!container) {

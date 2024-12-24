@@ -35,7 +35,7 @@ function App() {
         throw new Error("No token found. Are you sure the user is authenticated?");
       }
 
-      const response = await fetch("${API_GATEWAY}/cards", {
+      const response = await fetch(`${API_GATEWAY}/cards`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -68,7 +68,7 @@ function App() {
         throw new Error("No token found. Are you sure the user is authenticated?");
       }
 
-      const response = await fetch("${API_GATEWAY}/players/cards", {
+      const response = await fetch(`${API_GATEWAY}/players/cards`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
