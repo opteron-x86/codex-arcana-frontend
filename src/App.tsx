@@ -1,73 +1,40 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from 'react-oidc-context';
+import { useState, useEffect } from "react";
+import { useAuth } from "react-oidc-context";
 
 interface Card {
   id: string;
   name: string;
+  description: string;
   // Add more fields based on your API's card data
 }
 
 function App() {
   const auth = useAuth();
-
   const [cards, setCards] = useState<Card[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   /**
-   * 1) This is the function that calls your "create player" (or "login") endpoint.
-   *    The endpoint is presumably something like POST https://YOUR_API/players
-   */
-  async function createPlayer() {
-    try {
-      const token = auth.user?.id_token; 
-      if (!token) {
-        throw new Error('No token found. Are you sure the user is authenticated?');
-      }
-
-      // Example POST to your "create/update player" endpoint
-      const response = await fetch('https://13i18l9mw7.execute-api.us-east-2.amazonaws.com/players', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        // If your lambda or backend expects a body, you can pass it here
-        // But typically, just sending the token in the Authorization header
-        // is enough if you're using a Cognito Authorizer to pull sub, email, etc.
-        body: JSON.stringify({ exampleField: 'someValue' }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error creating player. Status: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      console.log('Player creation result:', data);
-    } catch (err: unknown) {
-      console.error('createPlayer error:', err);
-      // You might display an error if needed
-    }
-  }
-
-  /**
-   * 2) Example function to fetch cards from an authenticated endpoint
+   * Fetch cards from the masterlist.
    */
   async function fetchCards() {
     try {
       setIsLoading(true);
       setError(null);
 
-      const token = auth.user?.id_token; 
+      const token = auth.user?.id_token; // Fetch ID token for authentication
       if (!token) {
-        throw new Error('No token found. Are you sure the user is authenticated?');
+        throw new Error("No token found. Are you sure the user is authenticated?");
       }
 
-      const response = await fetch('https://13i18l9mw7.execute-api.us-east-2.amazonaws.com/cards', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        "https://13i18l9mw7.execute-api.us-east-2.amazonaws.com//cards",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Error fetching cards. Status: ${response.status} ${response.statusText}`);
@@ -79,7 +46,7 @@ function App() {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError(String(err));
+        setError("An unknown error occurred.");
       }
       setCards([]);
     } finally {
@@ -88,24 +55,52 @@ function App() {
   }
 
   /**
-   * 3) useEffect: whenever auth.isAuthenticated becomes true,
-   *    we can create the player in the backend if they don't exist.
-   *    This runs only once (or again if isAuthenticated toggles),
-   *    ensuring the player's record is inserted or updated.
+   * Add a card to the player's inventory.
+   */
+  async function addCardToInventory(cardId: string) {
+    try {
+      const token = auth.user?.id_token;
+      if (!token) {
+        throw new Error("No token found. Are you sure the user is authenticated?");
+      }
+
+      const response = await fetch(
+        `https://13i18l9mw7.execute-api.us-east-2.amazonaws.com/players/cards`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ cardId }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error adding card. Status: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log("Card added to inventory:", data);
+      alert(`Card added to inventory: ${data.cardId}`);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(`Error: ${err.message}`);
+      } else {
+        alert("An unknown error occurred.");
+      }
+    }
+  }
+
+  /**
+   * Fetch masterlist cards when the component mounts or auth state changes.
    */
   useEffect(() => {
     if (auth.isAuthenticated) {
-      createPlayer();
+      fetchCards();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth.isAuthenticated]);
-
-  // You can also auto-fetch cards in a similar effect:
-  // useEffect(() => {
-  //   if (auth.isAuthenticated) {
-  //     fetchCards();
-  //   }
-  // }, [auth.isAuthenticated]);
 
   if (auth.isLoading) {
     return <div>Loading OIDC auth...</div>;
@@ -122,25 +117,26 @@ function App() {
   return (
     <div>
       <h2>Welcome, {auth.user?.profile?.email}</h2>
-      <pre> ID Token: {auth.user?.id_token} </pre>
-      <pre> Access Token: {auth.user?.access_token} </pre>
-      <pre> Refresh Token: {auth.user?.refresh_token} </pre>
-      <button onClick={fetchCards} disabled={isLoading}>
-        {isLoading ? 'Fetching...' : 'Fetch Cards'}
-      </button>
+      <h3>Masterlist of Cards</h3>
 
-      {error && <div style={{ color: 'red' }}>Error: {error}</div>}
-      {cards.length > 0 ? (
+      {isLoading ? (
+        <p>Loading cards...</p>
+      ) : error ? (
+        <p style={{ color: "red" }}>Error: {error}</p>
+      ) : cards.length === 0 ? (
+        <p>No cards available.</p>
+      ) : (
         <ul>
           {cards.map((card) => (
-            <li key={card.id}>{card.name || card.id}</li>
+            <li key={card.id}>
+              <strong>{card.name}</strong>: {card.description}
+              <button onClick={() => addCardToInventory(card.id)}>Add to Inventory</button>
+            </li>
           ))}
         </ul>
-      ) : (
-        !isLoading && <div>No cards yet.</div>
       )}
 
-      <button onClick={() => auth.removeUser()}>Sign Out (local)</button>
+      <button onClick={() => auth.removeUser()}>Sign Out</button>
     </div>
   );
 }
